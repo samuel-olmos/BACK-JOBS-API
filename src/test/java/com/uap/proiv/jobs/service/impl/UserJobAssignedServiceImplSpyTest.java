@@ -108,6 +108,7 @@ public class UserJobAssignedServiceImplSpyTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(10, result.get(0).getUsers().get(0).getId());
+        assertEquals(2, result.size());
 
         verify(jobService, times(1)).getAllJobs();
         verify(userService, times(1)).search(1);
