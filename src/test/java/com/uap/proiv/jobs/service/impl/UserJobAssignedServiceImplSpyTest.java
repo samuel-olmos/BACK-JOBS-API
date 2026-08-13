@@ -1,13 +1,14 @@
 package com.uap.proiv.jobs.service.impl;
 
-import com.uap.proiv.jobs.client.JobApiRepository;
-import com.uap.proiv.jobs.dto.AssignedResponse;
-import com.uap.proiv.jobs.dto.Job;
-import com.uap.proiv.jobs.dto.UserApiResponse;
-import com.uap.proiv.jobs.service.AssignedService;
-import com.uap.proiv.jobs.service.JobService;
-import com.uap.proiv.jobs.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.Spy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,23 +17,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.beans.Transient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.uap.proiv.jobs.dto.AssignedResponse;
+import com.uap.proiv.jobs.dto.Job;
+import com.uap.proiv.jobs.dto.User;
+import com.uap.proiv.jobs.dto.UserApiResponse;
+import com.uap.proiv.jobs.dto.UserJobAssigned;
+import com.uap.proiv.jobs.service.AssignedService;
+import com.uap.proiv.jobs.service.JobService;
+import com.uap.proiv.jobs.service.UserService;
 
 @ExtendWidth(MockitoExtension.class)
-public class UserJobAssignedServiceImplTest {
+public class UserJobAssignedServiceImplSpyTest {
     @Mock
     JobService jobService;
 
     @Mock
     UserService userService;
+
+    @Spy
+    AssignedService assignedService;
 
     @Mock
     AssignedService assignedService;
@@ -98,7 +101,7 @@ public class UserJobAssignedServiceImplTest {
     void assign_succesOnePage(){
         when(jobService.getAllJobs()).thenReturn(jobs);
         when(userService.search(1)).thenReturn(userApiResponse);
-        when(assignedService.create(jobs,List.of(10,20))).thenReturn(assignedResponse);
+        doReturn(assignedResponse).when(assignedService).create(any(),any());
 
         List<UserJobAssigned> result = serviceImpl.assign();
 
@@ -110,6 +113,4 @@ public class UserJobAssignedServiceImplTest {
         verify(userService, times(1)).search(1);
         verify(assignedService, times(1)).create(jobs, List.of(10,20));
     }
-
-    
 }
